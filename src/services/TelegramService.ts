@@ -136,42 +136,49 @@ export class TelegramService {
           ) {
             const document = message.media.document;
 
-            if (document instanceof Api.Document) {
-              const isVideo = document.mimeType?.startsWith("video/");
+            try {
+              if (document instanceof Api.Document) {
+                const isVideo = document.mimeType?.startsWith("video/");
 
-              if (isVideo) {
-                const video: TelegramVideo = {
-                  id: document.id.toString(),
-                  fileName:
-                    this.getFileName(document) || `video_${document.id}.mp4`,
-                  fileSize: Number(document.size),
-                  duration: this.getVideoDuration(document),
-                  timestamp: new Date(message.date! * 1000),
-                };
+                if (isVideo) {
+                  const video: TelegramVideo = {
+                    id: document.id.toString(),
+                    fileName:
+                      this.getFileName(document) || `video_${document.id}.mp4`,
+                    fileSize: Number(document.size),
+                    duration: this.getVideoDuration(document),
+                    timestamp: new Date(message.date! * 1000),
+                  };
 
-                const filePath = await this.downloadVideo(
-                  config.telegram.channel,
-                  video
-                );
+                  const filePath = await this.downloadVideo(
+                    config.telegram.channel,
+                    video
+                  );
 
-                const s3Result = await this.s3Service.uploadVideo(
-                  filePath,
-                  config.telegram.channel,
-                  video.timestamp
-                );
-                logger.info(
-                  `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
-                );
+                  const s3Result = await this.s3Service.uploadVideo(
+                    filePath,
+                    config.telegram.channel,
+                    video.timestamp
+                  );
+                  logger.info(
+                    `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
+                  );
 
-                logger.debug(
-                  `Found video: ${video.fileName} (${video.fileSize} bytes)`
-                );
+                  logger.debug(
+                    `Found video: ${video.fileName} (${video.fileSize} bytes)`
+                  );
 
-                // videos.push(video);
-                logger.debug(
-                  `Found video: ${video.fileName} (${video.fileSize} bytes)`
-                );
+                  // videos.push(video);
+                  logger.debug(
+                    `Found video: ${video.fileName} (${video.fileSize} bytes)`
+                  );
+                }
               }
+            } catch (error) {
+              logger.error(
+                `Error processing document in message ${message.id}:`,
+                error
+              );
             }
           }
         }
