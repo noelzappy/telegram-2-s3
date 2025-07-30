@@ -94,7 +94,7 @@ export class TelegramService {
     }
   }
 
-  async getChannelVideos(channelUsername: string): Promise<TelegramVideo[]> {
+  async getChannelVideos(channelUsername: string): Promise<void> {
     if (!this.client) {
       throw new Error("Telegram client not initialized");
     }
@@ -105,7 +105,6 @@ export class TelegramService {
       // Get the channel entity
       const entity = await this.client.getEntity(channelUsername);
 
-      const videos: TelegramVideo[] = [];
       let offsetId = parseInt(
         fs
           .readFileSync(
@@ -119,7 +118,7 @@ export class TelegramService {
 
       while (hasMore) {
         const messages = await this.client.getMessages(entity, {
-          limit: 100,
+          limit: 500,
           offsetId: offsetId,
         });
 
@@ -143,6 +142,7 @@ export class TelegramService {
                 if (isVideo) {
                   const video: TelegramVideo = {
                     id: document.id.toString(),
+                    messageId: message.id,
                     fileName:
                       this.getFileName(document) || `video_${document.id}.mp4`,
                     fileSize: Number(document.size),
@@ -172,6 +172,12 @@ export class TelegramService {
                   logger.debug(
                     `Found video: ${video.fileName} (${video.fileSize} bytes)`
                   );
+
+                  const randomDelay = Math.floor(Math.random() * 500) + 500; // Random delay between 500ms and 1000ms
+
+                  await new Promise((resolve) =>
+                    setTimeout(resolve, randomDelay)
+                  ); // Throttle requests
                 }
               }
             } catch (error) {
@@ -195,12 +201,7 @@ export class TelegramService {
           offsetId.toString()
         );
         logger.debug(`Updated offset ID to ${offsetId}`);
-
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Throttle requests
       }
-
-      logger.info(`Found ${videos.length} videos...`);
-      return videos;
     } catch (error) {
       logger.error(
         `Failed to fetch videos from channel @${channelUsername}:`,
@@ -230,13 +231,15 @@ export class TelegramService {
       // Get the channel entity
       const entity = await this.client.getEntity(channelUsername);
 
-      // Find the message with this video
-      const messages = await this.client.getMessages(entity, {
-        limit: 100,
-      });
-
+      console.log(
+        `Fetching video with ID ${video.id} from channel @${channelUsername}...`,
+        parseInt(video.id, 10),
+        video.messageId
+      );
       let targetMessage = null;
-      for (const message of messages) {
+      for await (const message of this.client.iterMessages(entity, {
+        ids: [video.messageId],
+      })) {
         if (
           message.media &&
           message.media instanceof Api.MessageMediaDocument
@@ -247,6 +250,9 @@ export class TelegramService {
             document.id.toString() === video.id
           ) {
             targetMessage = message;
+            logger.debug(
+              `Found target message with ID ${message.id} for video ${video.fileName}`
+            );
             break;
           }
         }

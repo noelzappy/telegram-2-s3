@@ -23,10 +23,12 @@ async function main(): Promise<void> {
     await telegramService.initialize();
 
     console.log("✅ Telegram client authenticated successfully!");
+    console.log("📹 Fetching videos from channel...");
+    await telegramService.getChannelVideos(config.telegram.channel);
 
-    // Initialize and start scheduler
+    // Initialize and start scheduler (commented out for now)
     const schedulerService = new SchedulerService(telegramService);
-    await schedulerService.start();
+    // await schedulerService.start();
 
     logger.info("Application started successfully");
     logger.info(

@@ -5,6 +5,7 @@ export interface TelegramVideo {
   duration?: number | undefined;
   timestamp: Date;
   filePath?: string;
+  messageId: number; // Optional message ID for tracking
 }
 
 export interface S3UploadResult {

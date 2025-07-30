@@ -23,7 +23,7 @@ export class SchedulerService {
   async start(): Promise<void> {
     logger.info(`Starting scheduler with cron pattern: ${config.cronSchedule}`);
 
-    await this.executeTask();
+    // await this.executeTask();
 
     // this.task = cron.schedule(
     //   config.cronSchedule,
