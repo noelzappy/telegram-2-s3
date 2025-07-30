@@ -195,6 +195,8 @@ export class TelegramService {
           offsetId.toString()
         );
         logger.debug(`Updated offset ID to ${offsetId}`);
+
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Throttle requests
       }
 
       logger.info(`Found ${videos.length} videos...`);
