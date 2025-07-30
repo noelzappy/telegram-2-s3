@@ -7,16 +7,19 @@ import * as readline from "readline";
 import { logger } from "../utils/logger";
 import { config } from "../config/config";
 import { TelegramVideo } from "../types";
-import { ensureDirectoryExists } from "../utils/helpers";
+import { ensureDirectoryExists, formatFileSize } from "../utils/helpers";
+import { S3Service } from "./S3Service";
 
 export class TelegramService {
   private client: TelegramClient | null = null;
   private session: StringSession;
+  private s3Service: S3Service;
 
   constructor() {
     // Load existing session if available
     const sessionData = this.loadSession();
     this.session = new StringSession(sessionData);
+    this.s3Service = new S3Service();
   }
 
   /**
@@ -146,7 +149,20 @@ export class TelegramService {
                   timestamp: new Date(message.date! * 1000),
                 };
 
-                videos.push(video);
+                const filePath = await this.downloadVideo(
+                  config.telegram.channel,
+                  video
+                );
+
+                const s3Result = await this.s3Service.uploadVideo(
+                  filePath,
+                  config.telegram.channel,
+                  video.timestamp
+                );
+                logger.info(
+                  `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
+                );
+
                 logger.debug(
                   `Found video: ${video.fileName} (${video.fileSize} bytes)`
                 );

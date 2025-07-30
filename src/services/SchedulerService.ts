@@ -20,13 +20,15 @@ export class SchedulerService {
     this.webhookService = new WebhookService();
   }
 
-  start(): void {
+  async start(): Promise<void> {
     logger.info(`Starting scheduler with cron pattern: ${config.cronSchedule}`);
+
+    await this.executeTask();
 
     this.task = cron.schedule(
       config.cronSchedule,
       async () => {
-        await this.executeTask();
+        // await this.executeTask();
       },
       {
         scheduled: true,
@@ -101,17 +103,20 @@ export class SchedulerService {
             config.telegram.channel,
             video.timestamp
           );
-          stats.videosUploaded++;
+          logger.info(
+            `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
+          );
+          //   stats.videosUploaded++;
 
           // Send webhook
-          const webhookPayload: WebhookPayload = {
-            video_url: s3Result.url,
-            channel: `t.me/${config.telegram.channel}`,
-            timestamp: video.timestamp.toISOString(),
-          };
+          //   const webhookPayload: WebhookPayload = {
+          //     video_url: s3Result.url,
+          //     channel: `t.me/${config.telegram.channel}`,
+          //     timestamp: video.timestamp.toISOString(),
+          //   };
 
-          await this.webhookService.sendWebhook(webhookPayload);
-          stats.webhooksSent++;
+          //   await this.webhookService.sendWebhook(webhookPayload);
+          //   stats.webhooksSent++;
 
           // Clean up downloaded file
           try {

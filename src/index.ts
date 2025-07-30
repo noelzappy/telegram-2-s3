@@ -26,7 +26,7 @@ async function main(): Promise<void> {
 
     // Initialize and start scheduler
     const schedulerService = new SchedulerService(telegramService);
-    schedulerService.start();
+    await schedulerService.start();
 
     logger.info("Application started successfully");
     logger.info(

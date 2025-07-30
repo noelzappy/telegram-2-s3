@@ -55,11 +55,11 @@ TELEGRAM_PHONE_NUMBER=+1234567890
 TELEGRAM_CHANNEL=funny
 
 # AWS S3 Configuration
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_REGION=us-east-1
-S3_BUCKET_NAME=your-s3-bucket-name
-S3_PUBLIC_URL_BASE=https://your-s3-bucket-name.s3.amazonaws.com
+S3_SECRET_KEY=xxxxxxxxxxxxx
+S3_ACCESS_KEY=xxxxxxxxxxxxx
+S3_REGION=xxxxxxxxxxxxx
+S3_BUCKET_NAME=xxxxxxxxxxxxx
+S3_ENDPOINT=https://hdhd.s3.amazonaws.com
 
 # Webhook Configuration
 WEBHOOK_URL=https://your-n8n-instance.com/webhook/telegram-videos

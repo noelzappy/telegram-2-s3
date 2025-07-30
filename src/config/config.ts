@@ -56,7 +56,7 @@ export const config: Config = {
       "TELEGRAM_SESSION_FILE",
       "./telegram_session"
     ),
-    channel: getOptionalEnvVar("TELEGRAM_CHANNEL", "funny"),
+    channel: getOptionalEnvVar("TELEGRAM_CHANNEL", "Funny"),
   },
 
   s3: {

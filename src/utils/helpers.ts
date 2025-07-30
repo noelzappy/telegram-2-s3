@@ -73,7 +73,7 @@ export function generateS3Key(
   const day = String(timestamp.getDate()).padStart(2, "0");
 
   const sanitizedFileName = sanitizeFileName(fileName);
-  return `telegram-videos/${channelName}/${year}/${month}/${day}/${timestamp.getTime()}_${sanitizedFileName}`;
+  return `telegram-videos/${channelName}/${timestamp.getTime()}_${sanitizedFileName}`;
 }
 
 /**
