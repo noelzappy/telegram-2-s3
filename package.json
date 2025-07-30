@@ -1,0 +1,56 @@
+{
+  "name": "telegram-2-webhook",
+  "version": "1.0.0",
+  "description": "TypeScript-based Telegram client that downloads videos from channels and uploads to S3 with webhook notifications",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "watch": "tsc --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "telegram",
+    "webhook",
+    "s3",
+    "scheduler",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "@types/node-cron": "^3.0.11",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "concurrently": "^9.1.2",
+    "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.4.1",
+    "node-config": "^0.0.2",
+    "node-gyp": "^11.0.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.462.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
+    "nodemon": "^3.1.10",
+    "telegram": "^2.20.7",
+    "winston": "^3.11.0"
+  }
+}
