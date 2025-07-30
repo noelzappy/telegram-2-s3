@@ -166,6 +166,11 @@ export class TelegramService {
                 logger.debug(
                   `Found video: ${video.fileName} (${video.fileSize} bytes)`
                 );
+
+                // videos.push(video);
+                logger.debug(
+                  `Found video: ${video.fileName} (${video.fileSize} bytes)`
+                );
               }
             }
           }
@@ -176,6 +181,8 @@ export class TelegramService {
           hasMore = false; // No new messages, stop fetching
         }
         offsetId = newOffsetId;
+
+        // Save the new offset ID for next run
         fs.writeFileSync(
           path.join(config.app.downloadPath, "last_offset.txt"),
           offsetId.toString()

@@ -25,16 +25,16 @@ export class SchedulerService {
 
     await this.executeTask();
 
-    this.task = cron.schedule(
-      config.cronSchedule,
-      async () => {
-        // await this.executeTask();
-      },
-      {
-        scheduled: true,
-        timezone: config.app.timezone,
-      }
-    );
+    // this.task = cron.schedule(
+    //   config.cronSchedule,
+    //   async () => {
+    //     await this.executeTask();
+    //   },
+    //   {
+    //     scheduled: true,
+    //     timezone: config.app.timezone,
+    //   }
+    // );
 
     logger.info("Scheduler started successfully");
   }
@@ -67,75 +67,75 @@ export class SchedulerService {
         config.telegram.channel
       );
 
-      stats.totalVideosFound = videos.length;
+      //   stats.totalVideosFound = videos.length;
 
-      if (videos.length === 0) {
-        logger.info("No new videos found since last run");
-        return;
-      }
+      //   if (videos.length === 0) {
+      //     logger.info("No new videos found since last run");
+      //     return;
+      //   }
 
-      logger.info(`Found ${videos.length} videos to process`);
+      //   logger.info(`Found ${videos.length} videos to process`);
 
-      // Process each video
-      for (let i = 0; i < videos.length; i++) {
-        const video = videos[i];
+      //   // Process each video
+      //   for (let i = 0; i < videos.length; i++) {
+      //     const video = videos[i];
 
-        if (!video) {
-          logger.warn(`Video at index ${i} is undefined, skipping...`);
-          continue;
-        }
+      //     if (!video) {
+      //       logger.warn(`Video at index ${i} is undefined, skipping...`);
+      //       continue;
+      //     }
 
-        try {
-          logger.info(
-            `Processing video ${i + 1}/${videos.length}: ${video.fileName}`
-          );
+      //     try {
+      //       logger.info(
+      //         `Processing video ${i + 1}/${videos.length}: ${video.fileName}`
+      //       );
 
-          // Download video
-          const filePath = await this.telegramService.downloadVideo(
-            config.telegram.channel,
-            video
-          );
-          stats.videosDownloaded++;
+      //       // Download video
+      //       const filePath = await this.telegramService.downloadVideo(
+      //         config.telegram.channel,
+      //         video
+      //       );
+      //       stats.videosDownloaded++;
 
-          // Upload to S3
-          const s3Result = await this.s3Service.uploadVideo(
-            filePath,
-            config.telegram.channel,
-            video.timestamp
-          );
-          logger.info(
-            `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
-          );
-          //   stats.videosUploaded++;
+      //       // Upload to S3
+      //       const s3Result = await this.s3Service.uploadVideo(
+      //         filePath,
+      //         config.telegram.channel,
+      //         video.timestamp
+      //       );
+      //       logger.info(
+      //         `Video uploaded to S3: ${s3Result.url} (${formatFileSize(video.fileSize)})`
+      //       );
+      //       stats.videosUploaded++;
 
-          // Send webhook
-          //   const webhookPayload: WebhookPayload = {
-          //     video_url: s3Result.url,
-          //     channel: `t.me/${config.telegram.channel}`,
-          //     timestamp: video.timestamp.toISOString(),
-          //   };
+      //       //   Send webhook
+      //       const webhookPayload: WebhookPayload = {
+      //         video_url: s3Result.url,
+      //         channel: `t.me/${config.telegram.channel}`,
+      //         timestamp: video.timestamp.toISOString(),
+      //       };
 
-          //   await this.webhookService.sendWebhook(webhookPayload);
-          //   stats.webhooksSent++;
+      //       await this.webhookService.sendWebhook(webhookPayload);
+      //       stats.webhooksSent++;
 
-          // Clean up downloaded file
-          try {
-            fs.unlinkSync(filePath);
-            logger.debug(`Cleaned up local file: ${filePath}`);
-          } catch (cleanupError) {
-            logger.warn(
-              `Failed to clean up local file ${filePath}:`,
-              cleanupError
-            );
-          }
+      //       // Clean up downloaded file
+      //       try {
+      //         fs.unlinkSync(filePath);
+      //         logger.debug(`Cleaned up local file: ${filePath}`);
+      //       } catch (cleanupError) {
+      //         logger.warn(
+      //           `Failed to clean up local file ${filePath}:`,
+      //           cleanupError
+      //         );
+      //       }
 
-          logger.info(`✅ Successfully processed: ${video.fileName}`);
-        } catch (error) {
-          stats.errors++;
-          logger.error(`❌ Failed to process video ${video.fileName}:`, error);
-          // Continue with next video instead of stopping the entire process
-        }
-      }
+      //       logger.info(`✅ Successfully processed: ${video.fileName}`);
+      //     } catch (error) {
+      //       stats.errors++;
+      //       logger.error(`❌ Failed to process video ${video.fileName}:`, error);
+      //       // Continue with next video instead of stopping the entire process
+      //     }
+      //   }
     } catch (error) {
       stats.errors++;
       logger.error("Fatal error during weekly task execution:", error);
